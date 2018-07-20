@@ -1,5 +1,6 @@
 import socket
 import sys
+import json
 import traceback
 from threading import Thread
 
@@ -42,8 +43,10 @@ def start_server():
 
 def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
+    client_input = receive_input(connection, max_buffer_size)
+    print(client_input);
 
-    while is_active:
+    """while is_active:
         client_input = receive_input(connection, max_buffer_size)
 
         if "--QUIT--" in client_input:
@@ -54,25 +57,24 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
         else:
             print("Processed result: {}".format(client_input))
             connection.sendall("-".encode("utf8"))
-
+    """
 
 def receive_input(connection, max_buffer_size):
     client_input = connection.recv(max_buffer_size)
     client_input_size = sys.getsizeof(client_input)
-
+    print(client_input)
     if client_input_size > max_buffer_size:
         print("The input size is greater than expected {}".format(client_input_size))
 
-    decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
+    decoded_input = json.loads(client_input)  # decode and strip end of line
     result = process_input(decoded_input)
 
-    return result
+    return result[0] + ": " + result[1] + "\n"
 
 
-def process_input(input_str):
+def process_input(input_json):
     print("Processing the input received from client")
-
-    return "Hello " + str(input_str).upper()
+    return [input_json['user'] , input_json['message']]
 
 if __name__ == "__main__":
 	main()
