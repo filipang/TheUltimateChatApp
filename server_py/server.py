@@ -4,6 +4,7 @@ import json
 import traceback
 from threading import Thread
 
+connections = []
 
 def main():
     start_server()
@@ -25,10 +26,10 @@ def start_server():
 
     soc.listen(5)       # queue up to 5 requests
     print("Socket now listening")
-
     # infinite loop- do not reset for every requests
     while True:
         connection, address = soc.accept()
+        connections.append((address[0], connection))
         ip, port = str(address[0]), str(address[1])
         print("Connected with " + ip + ":" + port)
 
@@ -45,8 +46,8 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
     client_input = receive_input(connection, max_buffer_size)
     print(client_input);
-
-    """while is_active:
+    
+    while is_active:
         client_input = receive_input(connection, max_buffer_size)
 
         if "--QUIT--" in client_input:
@@ -55,9 +56,10 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
             print("Connection " + ip + ":" + port + " closed")
             is_active = False
         else:
-            print("Processed result: {}".format(client_input))
-            connection.sendall("-".encode("utf8"))
-    """
+            for con in connections:
+                add, conx = con;
+                if(add != ip):
+                    conx.sendall(client_input)
 
 def receive_input(connection, max_buffer_size):
     client_input = connection.recv(max_buffer_size)
@@ -68,7 +70,6 @@ def receive_input(connection, max_buffer_size):
 
     decoded_input = json.loads(client_input)  # decode and strip end of line
     result = process_input(decoded_input)
-
     return result[0] + ": " + result[1] + "\n"
 
 
