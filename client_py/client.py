@@ -1,11 +1,12 @@
 import socket
 import sys
+import json
 
 def main():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = "192.168.45.96"
-    port = 1337
-
+    host = sys.argv[2]
+    port = int (sys.argv[1])
+    user = sys.argv[3]
     try:
         soc.connect((host, port))
     except:
@@ -14,7 +15,14 @@ def main():
 
     print("Enter 'quit' to exit")
     message = input(" -> ")
+    my_dict={}
+    my_dict["message"] = message
+    my_dict["user"] = user
+    print json.dumps(my_dict, indent=4)
+    soc.sendall(json.dumps(my_dict))
 
+
+    """
     while message != 'quit':
         soc.sendall(message.encode("utf8"))
         if soc.recv(5120).decode("utf8") == "-":
@@ -23,6 +31,6 @@ def main():
         message = input(" -> ")
 
     soc.send(b'--quit--')
-
+"""
 if __name__ == "__main__":
 	main()
