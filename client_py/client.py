@@ -12,15 +12,20 @@ def main():
     except:
         print("Connection error")
         sys.exit()
-
-    print("Enter 'quit' to exit")
-    message = input(" -> ")
-    my_dict={}
-    my_dict["message"] = message
-    my_dict["user"] = user
-    print json.dumps(my_dict, indent=4)
-    soc.sendall(json.dumps(my_dict))
-
+    
+    while True :
+        print("Enter --QUIT-- to exit")
+        message = raw_input(" -> ")
+        
+        print("'{}'".format(message))
+        my_dict={}
+        my_dict["message"] = message
+        my_dict["user"] = user
+        print json.dumps(my_dict, indent=4)
+        soc.sendall(json.dumps(my_dict))
+        if message == "--QUIT--" :
+            break
+    print("Session closed")
 
     """
     while message != 'quit':
