@@ -6,15 +6,12 @@ from threading import Thread
 
 CONNECTED = False
 def client_send_thread(soc, user):
+    print("Enter --QUIT-- to exit")
     while True :
-        print("Enter --QUIT-- to exit")
         message = raw_input(" -> ")
-
-        print("'{}'".format(message))
         my_dict={}
         my_dict["message"] = message
         my_dict["user"] = user
-        print json.dumps(my_dict, indent=4)
         soc.sendall(json.dumps(my_dict))
         if message == "--QUIT--" :
             CONNECTED = False
@@ -24,17 +21,15 @@ def client_send_thread(soc, user):
 
 
 def client_receive_thread(connection, max_buffer_size):
-    while CONNECTED :
-        client_input = connection.recv(max_buffer_size)
-        client_input_size = sys.getsizeof(client_input)
-        print(client_input)
-        if client_input_size > max_buffer_size:
-            print("The input size is greater than expected {}".format(client_input_size))
+    while True :
+        if True:
+            client_input = connection.recv(max_buffer_size)
+            client_input_size = sys.getsizeof(client_input)
+            if client_input_size > max_buffer_size:
+                print("The input size is greater than expected {}".format(client_input_size))
 
-        decoded_input = json.loads(client_input)  # decode and strip end of line
-        result = [input_json['user'] , input_json['message']]
-        proc_client_inp = result[0] + ": " + result[1] + "\n"
-        print(proc_client_inp)
+            decoded_input  = client_input.decode(encoding = 'utf-8', errors = 'strict')  # decode and strip end of line
+            print(decoded_input)
 
 
 
