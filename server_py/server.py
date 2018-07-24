@@ -57,7 +57,7 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
             for con in connections:
                 add, conx = con;
                 print("Sending message to " + add + " client if it is not " + ip + "...")
-                if(add != ip):
+                if(conx != connection):
                     conx.sendall(client_input)
 
 def receive_input(connection, max_buffer_size):
