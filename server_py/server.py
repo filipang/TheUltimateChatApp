@@ -44,9 +44,6 @@ def start_server():
 
 def client_thread(connection, ip, port, max_buffer_size = 5120):
     is_active = True
-    client_input = receive_input(connection, max_buffer_size)
-    print(client_input);
-    
     while is_active:
         client_input = receive_input(connection, max_buffer_size)
 
@@ -56,8 +53,10 @@ def client_thread(connection, ip, port, max_buffer_size = 5120):
             print("Connection " + ip + ":" + port + " closed")
             is_active = False
         else:
+            print("SEND TO EVERYONE ELSE")
             for con in connections:
                 add, conx = con;
+                print("Sending message to " + add + " client if it is not " + ip + "...")
                 if(add != ip):
                     conx.sendall(client_input)
 
